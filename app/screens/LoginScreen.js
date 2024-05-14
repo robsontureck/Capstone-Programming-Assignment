@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/login",
+        "http://192.168.1.101:3000/api/users/login",
         { username, password }
       );
       await AsyncStorage.setItem("token", response.data.token);

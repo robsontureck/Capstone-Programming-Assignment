@@ -29,7 +29,7 @@
 
             // Send the data to your signup endpoint using fetch or Axios
             try {
-                const response = await fetch('/users/signup', {
+                const response = await fetch('/api/users/signup', {
                     method: 'POST',
                     body: JSON.stringify({ username, password }),
                     headers: {

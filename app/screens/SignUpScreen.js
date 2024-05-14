@@ -8,7 +8,7 @@ export default function SignUpScreen({ navigation }) {
 
   const handleSignUp = async () => {
     try {
-      await axios.post("http://localhost:3000/api/users/signup", {
+      await axios.post("http://192.168.1.101:3000/api/users/signup", {
         username,
         password,
       });
