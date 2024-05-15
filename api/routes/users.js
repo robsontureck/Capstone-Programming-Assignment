@@ -13,7 +13,7 @@ router.get("/userlogin", (req, res) => {
   res.render("login"); // Render the login.hbs template
 });
 
-router.post("/signup", async (req, res) => {
+/*router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   console.log(`Username: ${username}, password: ${password}`);
@@ -28,6 +28,28 @@ router.post("/signup", async (req, res) => {
     );
   //const user = await User.create({ username, password: hashedPassword });
   //res.json({ id: user.id, username: user.username });
+});*/
+
+router.post("/signup", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(`Username: ${username}, password: ${password}`);
+
+    await User.sync();
+    const existingUser = await User.findOne({ where: { username } });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    const user = await User.create({ username, password: hashedPassword });
+    console.log("Successfully added a new user!");
+    res.json({ id: user.id, username: user.username });
+  } catch (error) {
+    console.error("Failed to synchronize with the database:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 router.post("/login", async (req, res) => {
