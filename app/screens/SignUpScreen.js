@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -22,11 +23,15 @@ export default function SignUpScreen({ navigation }) {
         setErrorMessage("Username and/or password cannot be blank.");
         return;
       }
-      await axios.post("http://192.168.1.103:3000/api/users/signup", {
-        username,
-        password,
-      });
-      navigation.navigate("Login");
+      const response = await axios.post(
+        "http://192.168.1.103:3000/api/users/signup",
+        {
+          username,
+          password,
+        }
+      );
+      await AsyncStorage.setItem("token", response.data.token);
+      navigation.replace("UserInfo");
       setErrorMessage(""); // Clear the error message on successful sign up
     } catch (error) {
       if (error.response && error.response.data) {

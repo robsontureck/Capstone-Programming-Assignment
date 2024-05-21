@@ -6,6 +6,10 @@ const User = sequelize.define(
   {
     username: { type: DataTypes.STRING, unique: true },
     password: { type: DataTypes.STRING },
+    name: { type: DataTypes.STRING },
+    age: { type: DataTypes.INTEGER },
+    weight: { type: DataTypes.FLOAT },
+    calories: { type: DataTypes.FLOAT },
   },
   { timestamps: false }
 );

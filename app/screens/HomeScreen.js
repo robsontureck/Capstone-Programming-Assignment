@@ -232,7 +232,7 @@ export default function HomeScreen() {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
-        "http://YOUR_NEW_IP_ADDRESS:3000/api/fitness",
+        "http://192.168.1.103:3000/api/fitness",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -247,7 +247,7 @@ export default function HomeScreen() {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
-        "http://YOUR_NEW_IP_ADDRESS:3000/api/users/me",
+        "http://192.168.1.103:3000/api/users/me",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
