@@ -22,7 +22,7 @@ export default function SignUpScreen({ navigation }) {
         setErrorMessage("Username and/or password cannot be blank.");
         return;
       }
-      await axios.post("http://192.168.1.101:3000/api/users/signup", {
+      await axios.post("http://192.168.1.103:3000/api/users/signup", {
         username,
         password,
       });
