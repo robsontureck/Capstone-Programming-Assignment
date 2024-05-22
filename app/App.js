@@ -11,6 +11,7 @@ import HomeScreen from "./screens/HomeScreen";
 import AboutScreen from "./screens/AboutScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import UserInfoScreen from "./screens/UserInfoScreen";
+import AddMealScreen from "./screens/AddMealScreen"; // Import AddMealView here
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="UserInfo" component={UserInfoScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="AddMeal" component={AddMealScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
