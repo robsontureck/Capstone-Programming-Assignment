@@ -2,73 +2,82 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   Button,
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
 
 const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
   const [workoutType, setWorkoutType] = useState("");
   const [duration, setDuration] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const addWorkoutEntry = async () => {
+  const handleDelete = async (id) => {
+    const token = await AsyncStorage.getItem("token");
     try {
-      const token = await AsyncStorage.getItem("token");
-      const newEntry = {
-        type: workoutType,
-        duration: parseInt(duration),
-        date: selectedDate.toISOString().split("T")[0],
-      };
-      await axios.post(
-        "http://YOUR_NEW_IP_ADDRESS:3000/api/workouts",
-        newEntry,
+      await axios.delete(
+        `http://192.168.1.103:3000/api/workouts/workouts/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      fetchWorkoutsData();
-      setWorkoutType(""); // Clear input after adding
-      setDuration("");
+      // Filter out the deleted workout
+      setWorkoutsData(workoutsData.filter((workout) => workout.id !== id));
     } catch (error) {
-      console.error(error);
+      console.error("Failed to delete workout:", error);
     }
   };
 
-  const updateWorkoutEntry = async (id, type, duration) => {
+  const handleEdit = async (id, newType, newDuration) => {
+    const token = await AsyncStorage.getItem("token");
+    const updatedEntry = {
+      type: newType,
+      duration: parseInt(newDuration),
+      date: selectedDate.toISOString().split("T")[0],
+    };
     try {
-      const token = await AsyncStorage.getItem("token");
-      await axios.put(
-        `http://YOUR_NEW_IP_ADDRESS:3000/api/workouts/${id}`,
-        { type, duration, date: selectedDate.toISOString().split("T")[0] },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await axios.put(
+        `http://192.168.1.103:3000/api/workouts/workouts/${id}`,
+        updatedEntry,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      fetchWorkoutsData();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteWorkoutEntry = async (id) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await axios.delete(`http://YOUR_NEW_IP_ADDRESS:3000/api/workouts/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const updatedWorkouts = workoutsData.map((workout) => {
+        if (workout.id === id) {
+          return { ...workout, ...response.data };
+        }
+        return workout;
       });
-      fetchWorkoutsData();
+      setWorkoutsData(updatedWorkouts);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to edit workout:", error);
     }
   };
 
-  /* useEffect(() => {
+  const addWorkoutEntry = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const newEntry = {
+      type: workoutType,
+      duration: parseInt(duration),
+      date: selectedDate.toISOString().split("T")[0],
+    };
+    await axios.post(
+      "http://192.168.1.103:3000/api/workouts/workouts",
+      newEntry,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     fetchWorkoutsData();
-  }, [selectedDate]);*/
+    setWorkoutType("");
+    setDuration("");
+  };
 
   const onDateChange = (days) => {
     const newDate = new Date(selectedDate);
@@ -98,23 +107,24 @@ const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
             <Text>{item.duration} mins</Text>
             <Button
               title="Edit"
-              onPress={() =>
-                updateWorkoutEntry(item.id, item.type, item.duration)
-              }
+              onPress={() => handleEdit(item.id, item.type, item.duration)}
             />
-            <Button
-              title="Delete"
-              onPress={() => deleteWorkoutEntry(item.id)}
-            />
+            <Button title="Delete" onPress={() => handleDelete(item.id)} />
           </View>
         )}
       />
-      <TextInput
-        placeholder="Workout Type"
-        value={workoutType}
-        onChangeText={setWorkoutType}
-        style={styles.input}
-      />
+      <Picker
+        selectedValue={workoutType}
+        onValueChange={(itemValue, itemIndex) => setWorkoutType(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select a workout type" value="" />
+        <Picker.Item label="Running" value="Running" />
+        <Picker.Item label="Cycling" value="Cycling" />
+        <Picker.Item label="Swimming" value="Swimming" />
+        <Picker.Item label="Yoga" value="Yoga" />
+        <Picker.Item label="Weight Training" value="Weight Training" />
+      </Picker>
       <TextInput
         placeholder="Duration (mins)"
         value={duration}
@@ -137,6 +147,11 @@ const styles = StyleSheet.create({
   },
   arrow: { fontSize: 24, marginHorizontal: 20 },
   dateText: { fontSize: 18 },
+  picker: {
+    height: 50,
+    width: 350,
+    marginBottom: 20,
+  },
   input: { borderWidth: 1, padding: 10, marginBottom: 10 },
   entry: { marginBottom: 10, padding: 10, borderWidth: 1 },
 });

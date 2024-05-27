@@ -64,7 +64,7 @@ export default function HomeScreen({ navigation }) {
       const token = await AsyncStorage.getItem("token");
       console.log("Fetching workouts data...");
       const response = await axios.get(
-        "http://192.168.1.103:3000/api/workouts",
+        "http://192.168.1.103:3000/api/workouts/workouts",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -105,6 +105,10 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     fetchMealsData();
+  }, []); // Empty dependency array ensures this runs only once
+
+  useEffect(() => {
+    fetchWorkoutsData();
   }, []); // Empty dependency array ensures this runs only once
 
   const renderScene = SceneMap({

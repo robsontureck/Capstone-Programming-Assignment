@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Workout } = require("../models");
+const Workout = require("../models/workout");
 const authenticateToken = require("../middleware/auth");
 
 router.post("/workouts", authenticateToken, async (req, res) => {
@@ -10,10 +10,11 @@ router.post("/workouts", authenticateToken, async (req, res) => {
       type,
       duration,
       date,
-      userId: req.user.id,
+      user_id: req.user.id,
     });
     res.json(workout);
   } catch (error) {
+    console.error("Failed to create workout:", error);
     res
       .status(500)
       .json({ error: "An error occurred while saving workout entry." });
@@ -22,9 +23,10 @@ router.post("/workouts", authenticateToken, async (req, res) => {
 
 router.get("/workouts", authenticateToken, async (req, res) => {
   try {
-    const workouts = await Workout.findAll({ where: { userId: req.user.id } });
+    const workouts = await Workout.findAll({ where: { user_id: req.user.id } });
     res.json(workouts);
   } catch (error) {
+    console.error("Failed to get workout:", error);
     res
       .status(500)
       .json({ error: "An error occurred while fetching workout entries." });
@@ -45,6 +47,7 @@ router.put("/workouts/:id", authenticateToken, async (req, res) => {
     await workout.save();
     res.json(workout);
   } catch (error) {
+    console.error("Failed to edit workout:", error);
     res
       .status(500)
       .json({ error: "An error occurred while updating workout entry." });
@@ -61,6 +64,7 @@ router.delete("/workouts/:id", authenticateToken, async (req, res) => {
     await workout.destroy();
     res.json({ message: "Workout entry deleted." });
   } catch (error) {
+    console.error("Failed to delete workout:", error);
     res
       .status(500)
       .json({ error: "An error occurred while deleting workout entry." });

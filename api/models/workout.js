@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
+const sequelize = require("./index");
 const User = require("./user");
 
 const Workout = sequelize.define("Workout", {
@@ -15,7 +15,7 @@ const Workout = sequelize.define("Workout", {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  userId: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
