@@ -66,9 +66,9 @@ const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     fetchWorkoutsData();
-  }, [selectedDate]);
+  }, [selectedDate]);*/
 
   const onDateChange = (days) => {
     const newDate = new Date(selectedDate);

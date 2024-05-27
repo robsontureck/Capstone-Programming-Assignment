@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,27 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
     fetchMealsData();
   }, [selectedDate]); // Only run when selectedDate changes
 
+  // Memoize the data fetching function
+  const fetchMealsDataView = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      console.log("Fetching meals data view...");
+      const response = await axios.get(
+        "http://192.168.1.103:3000/api/meals/meals", // Ensure the URL is correct and accessible
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Check if the fetched data is different from the current state before updating
+      if (JSON.stringify(mealsData) !== JSON.stringify(response.data)) {
+        setMealsData(response.data);
+      }
+      console.log("Fetched meals data view:", response.data);
+    } catch (error) {
+      console.error("Fetching meals data failed:", error);
+    }
+  }, [mealsData, setMealsData]); // Include dependencies used inside the function
   const onDateChange = (days) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
@@ -26,7 +47,7 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
   const renderMeals = (mealType) => {
     const meals = mealsData.filter(
       (item) =>
-        item.mealType === mealType &&
+        item.meal_type === mealType &&
         item.date === selectedDate.toISOString().split("T")[0]
     );
     return (
@@ -37,8 +58,8 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.entry}>
-              <Text>{item.meal}</Text>
-              <Text>{item.calories} Calories</Text>
+              <Text style={styles.mealText}>{item.meal}</Text>
+              <Text style={styles.caloriesText}>{item.calories} Calories</Text>
             </View>
           )}
         />
@@ -48,6 +69,17 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
             navigation.navigate("AddMeal", {
               mealType,
               date: selectedDate.toISOString().split("T")[0],
+              fetchMealsData,
+            })
+          }
+        />
+        <Button
+          title={`Edit ${mealType}`}
+          onPress={() =>
+            navigation.navigate("EditMeal", {
+              mealType,
+              date: selectedDate.toISOString().split("T")[0],
+              meals,
               fetchMealsData,
             })
           }
@@ -86,7 +118,21 @@ const styles = StyleSheet.create({
   dateText: { fontSize: 18 },
   mealContainer: { marginBottom: 20 },
   header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
-  entry: { marginBottom: 10, padding: 10, borderWidth: 1 },
+  entry: {
+    flexDirection: "row", // Align items in a row
+    justifyContent: "space-between", // Space between items
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    alignItems: "center", // Align items vertically
+  },
+  mealText: {
+    fontSize: 16, // Example size
+    fontWeight: "bold",
+  },
+  caloriesText: {
+    fontSize: 16, // Example size
+  },
 });
 
 export default MealsView;

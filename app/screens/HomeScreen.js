@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useWindowDimensions } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,19 +22,42 @@ export default function HomeScreen({ navigation }) {
   const [mealsData, setMealsData] = useState([]);
   const [workoutsData, setWorkoutsData] = useState([]);
 
-  const fetchMealsData = async () => {
+  /*const fetchMealsData = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
       console.log("Fetching meals data...");
-      const response = await axios.get("http://192.168.1.103:3000/api/meals", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "http://192.168.1.103:3000/api/meals/meals",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setMealsData(response.data);
       console.log("Fetched meals data:", response.data);
     } catch (error) {
       console.error(error);
     }
-  };
+  };*/
+  const fetchMealsData = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      console.log("Fetching meals data view...");
+      const response = await axios.get(
+        "http://192.168.1.103:3000/api/meals/meals", // Ensure the URL is correct and accessible
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Check if the fetched data is different from the current state before updating
+      if (JSON.stringify(mealsData) !== JSON.stringify(response.data)) {
+        setMealsData(response.data);
+      }
+      console.log("Fetched meals data view:", mealsData);
+    } catch (error) {
+      console.error("Fetching meals data failed:", error);
+    }
+  }, [mealsData, setMealsData]); // Include dependencies used inside the function
 
   const fetchWorkoutsData = async () => {
     try {
@@ -69,11 +92,19 @@ export default function HomeScreen({ navigation }) {
       console.error(error);
     }
   };
-
+  /*
   useEffect(() => {
     fetchUserInfo();
     fetchMealsData();
     fetchWorkoutsData();
+  }, []); // Empty dependency array ensures this runs only once*/
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []); // Empty dependency array ensures this runs only once
+
+  useEffect(() => {
+    fetchMealsData();
   }, []); // Empty dependency array ensures this runs only once
 
   const renderScene = SceneMap({
