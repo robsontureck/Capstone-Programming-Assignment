@@ -7,15 +7,18 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sharedStyles from "../styles/styles";
-
+import { useDarkMode } from "../contexts/DarkModeContext"; // Assuming the context setup
 const EditMeal = ({ route, navigation }) => {
   const { meals } = route.params;
-  const [mealEdits, setMealEdits] = useState(meals);
-
+  const { isDarkMode } = useDarkMode(); // Access dark mode flag
+  const [mealEdits, setMealEdits] = useState(
+    meals.map((meal) => ({ ...meal, key: meal.id.toString() }))
+  );
   const handleSave = async (meal) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -28,13 +31,11 @@ const EditMeal = ({ route, navigation }) => {
       );
       route.params.fetchMealsData();
       Alert.alert("Success", "Meal updated successfully!");
-      // Optionally refresh the meal list or navigate back
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Failed to update meal.");
     }
   };
-
   const handleDelete = async (id) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -52,51 +53,56 @@ const EditMeal = ({ route, navigation }) => {
       Alert.alert("Error", "Failed to delete meal.");
     }
   };
-
-  return (
-    <View style={styles.container}>
-      {mealEdits.map((meal, index) => (
-        <View key={meal.id} style={styles.mealEntry}>
-          <Text style={styles.headers}>Meal</Text>
-          <TextInput
-            style={styles.input}
-            value={meal.meal}
-            onChangeText={(text) => {
-              const updatedMeals = [...mealEdits];
-              updatedMeals[index].meal = text;
-              setMealEdits(updatedMeals);
-            }}
-          />
-          <Text style={styles.headers}>Calories</Text>
-          <TextInput
-            style={styles.input}
-            value={meal.calories.toString()}
-            onChangeText={(text) => {
-              const updatedMeals = [...mealEdits];
-              updatedMeals[index].calories = text;
-              setMealEdits(updatedMeals);
-            }}
-            keyboardType="numeric"
-          />
-
-          <TouchableOpacity
-            style={sharedStyles.button}
-            onPress={() => handleSave(meal)}
-          >
-            <Text style={sharedStyles.buttonText}>{"SAVE"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={sharedStyles.redButton}
-            onPress={() => handleDelete(meal.id)}
-          >
-            <Text style={sharedStyles.buttonText}>{"DELETE"}</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+  const containerStyle = isDarkMode
+    ? styles.darkContainer
+    : styles.lightContainer;
+  const textStyle = isDarkMode ? styles.darkText : styles.lightText;
+  const renderItem = ({ item, index }) => (
+    <View style={[styles.mealEntry, containerStyle]}>
+      <Text style={[styles.headers, textStyle]}>Meal</Text>
+      <TextInput
+        style={[styles.input, textStyle, { color: textStyle.color }]}
+        value={item.meal}
+        onChangeText={(text) => {
+          const updatedMeals = [...mealEdits];
+          updatedMeals[index].meal = text;
+          setMealEdits(updatedMeals);
+        }}
+      />
+      <Text style={[styles.headers, textStyle]}>Calories</Text>
+      <TextInput
+        style={[styles.input, textStyle, { color: textStyle.color }]}
+        value={item.calories.toString()}
+        onChangeText={(text) => {
+          const updatedMeals = [...mealEdits];
+          updatedMeals[index].calories = parseInt(text, 10);
+          setMealEdits(updatedMeals);
+        }}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity
+        style={sharedStyles.button}
+        onPress={() => handleSave(item)}
+      >
+        <Text style={sharedStyles.buttonText}>SAVE</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={sharedStyles.redButton}
+        onPress={() => handleDelete(item.id)}
+      >
+        <Text style={sharedStyles.buttonText}>DELETE</Text>
+      </TouchableOpacity>
     </View>
   );
+  return (
+    <FlatList
+      data={mealEdits}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.key}
+      style={[styles.container, containerStyle]}
+    />
+  );
 };
-
 const styles = StyleSheet.create({
   headers: {
     fontSize: 24,
@@ -122,6 +128,9 @@ const styles = StyleSheet.create({
     textAlign: "right",
     borderRadius: 7,
   },
+  darkContainer: { backgroundColor: "#333" },
+  lightContainer: { backgroundColor: "#fff" },
+  darkText: { color: "#fff" },
+  lightText: { color: "#000" },
 });
-
 export default EditMeal;

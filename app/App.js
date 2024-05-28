@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { DarkModeProvider } from "./contexts/DarkModeContext";
 
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -11,9 +12,10 @@ import HomeScreen from "./screens/HomeScreen";
 import AboutScreen from "./screens/AboutScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import UserInfoScreen from "./screens/UserInfoScreen";
-import AddMealScreen from "./screens/AddMealScreen"; // Import AddMealView here
-import EditMealScreen from "./screens/EditMealScreen"; // Import your EditMeal screen
+import AddMealScreen from "./screens/AddMealScreen";
+import EditMealScreen from "./screens/EditMealScreen";
 import EditWorkoutScreen from "./screens/EditWorkoutScreen";
+import EditUserInfoScreen from "./screens/EditUserInfoScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -30,18 +32,26 @@ function MainTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="UserInfo" component={UserInfoScreen} />
-        <Stack.Screen name="Main" component={MainTabs} />
-        <Stack.Screen name="AddMeal" component={AddMealScreen} />
-        <Stack.Screen name="EditMeal" component={EditMealScreen} />
-        <Stack.Screen name="EditWorkout" component={EditWorkoutScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <DarkModeProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Splash"
+          screenOptions={{
+            headerShown: false, // This will hide the header for all screens
+          }}
+        >
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="UserInfo" component={UserInfoScreen} />
+          <Stack.Screen name="Main" component={MainTabs} />
+          <Stack.Screen name="AddMeal" component={AddMealScreen} />
+          <Stack.Screen name="EditMeal" component={EditMealScreen} />
+          <Stack.Screen name="EditWorkout" component={EditWorkoutScreen} />
+          <Stack.Screen name="EditUserInfo" component={EditUserInfoScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </DarkModeProvider>
   );
 }
 

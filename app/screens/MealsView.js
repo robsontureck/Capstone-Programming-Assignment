@@ -1,44 +1,24 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
+  ScrollView,
   View,
   Text,
-  FlatList,
   StyleSheet,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sharedStyles from "../styles/styles";
+import { useDarkMode } from "../contexts/DarkModeContext"; // Ensure you have the correct path to your context
 
 const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     fetchMealsData();
-  }, [selectedDate]); // Only run when selectedDate changes
+  }, [selectedDate]);
 
-  // Memoize the data fetching function
-  const fetchMealsDataView = useCallback(async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Fetching meals data view...");
-      const response = await axios.get(
-        "http://192.168.1.103:3000/api/meals/meals", // Ensure the URL is correct and accessible
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      // Check if the fetched data is different from the current state before updating
-      if (JSON.stringify(mealsData) !== JSON.stringify(response.data)) {
-        setMealsData(response.data);
-      }
-      console.log("Fetched meals data view:", response.data);
-    } catch (error) {
-      console.error("Fetching meals data failed:", error);
-    }
-  }, [mealsData, setMealsData]); // Include dependencies used inside the function
   const onDateChange = (days) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
@@ -53,18 +33,24 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
     );
     return (
       <View style={styles.mealContainer}>
-        <Text style={styles.header}>{mealType}</Text>
-        <FlatList
-          data={meals}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.entry}>
-              <Text style={styles.mealText}>{item.meal}</Text>
-              <Text style={styles.caloriesText}>{item.calories} Calories</Text>
-            </View>
-          )}
-        />
-
+        <Text
+          style={[
+            styles.header,
+            isDarkMode ? styles.darkText : styles.lightText,
+          ]}
+        >
+          {mealType}
+        </Text>
+        {meals.map((item, index) => (
+          <View key={index} style={styles.entry}>
+            <Text style={isDarkMode ? styles.darkText : styles.lightText}>
+              {item.meal}
+            </Text>
+            <Text style={isDarkMode ? styles.darkText : styles.lightText}>
+              {item.calories} Calories
+            </Text>
+          </View>
+        ))}
         <TouchableOpacity
           style={sharedStyles.greenButton}
           onPress={() =>
@@ -77,7 +63,6 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
         >
           <Text style={sharedStyles.buttonText}>{`Add ${mealType}`}</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={sharedStyles.button}
           onPress={() =>
@@ -95,21 +80,46 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
     );
   };
 
+  const containerStyle = isDarkMode
+    ? styles.darkContainer
+    : styles.lightContainer;
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={[styles.container, containerStyle]}>
       <View style={styles.datePickerContainer}>
         <TouchableOpacity onPress={() => onDateChange(-1)}>
-          <Text style={styles.arrow}>{"<"}</Text>
+          <Text
+            style={[
+              styles.arrow,
+              isDarkMode ? styles.darkText : styles.lightText,
+            ]}
+          >
+            {"<"}
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
+        <Text
+          style={[
+            styles.dateText,
+            isDarkMode ? styles.darkText : styles.lightText,
+          ]}
+        >
+          {selectedDate.toDateString()}
+        </Text>
         <TouchableOpacity onPress={() => onDateChange(1)}>
-          <Text style={styles.arrow}>{">"}</Text>
+          <Text
+            style={[
+              styles.arrow,
+              isDarkMode ? styles.darkText : styles.lightText,
+            ]}
+          >
+            {">"}
+          </Text>
         </TouchableOpacity>
       </View>
       {renderMeals("Breakfast")}
       {renderMeals("Lunch")}
       {renderMeals("Dinner")}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -131,20 +141,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   entry: {
-    flexDirection: "row", // Align items in a row
-    justifyContent: "space-between", // Space between items
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
     padding: 10,
     borderWidth: 1,
-    alignItems: "center", // Align items vertically
+    alignItems: "center",
     borderRadius: 7,
   },
   mealText: {
-    fontSize: 16, // Example size
+    fontSize: 16,
     fontWeight: "bold",
   },
   caloriesText: {
-    fontSize: 16, // Example size
+    fontSize: 16,
+  },
+  darkContainer: {
+    backgroundColor: "#333",
+  },
+  lightContainer: {
+    backgroundColor: "#fff",
+  },
+  darkText: {
+    color: "#fff",
+  },
+  lightText: {
+    color: "#000",
   },
 });
 

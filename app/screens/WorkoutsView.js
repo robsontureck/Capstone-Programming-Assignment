@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import sharedStyles from "../styles/styles";
+import { useDarkMode } from "../contexts/DarkModeContext"; // Ensure this is correctly imported
 
 const WorkoutsView = ({
   fetchWorkoutsData,
@@ -22,6 +23,7 @@ const WorkoutsView = ({
   const [workoutType, setWorkoutType] = useState("");
   const [duration, setDuration] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { isDarkMode } = useDarkMode(); // Use the dark mode context
 
   const addWorkoutEntry = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -48,15 +50,22 @@ const WorkoutsView = ({
     setSelectedDate(newDate);
   };
 
+  const containerStyle = isDarkMode
+    ? styles.darkContainer
+    : styles.lightContainer;
+  const textStyle = isDarkMode ? styles.darkText : styles.lightText;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <View style={styles.datePickerContainer}>
         <TouchableOpacity onPress={() => onDateChange(-1)}>
-          <Text style={styles.arrow}>{"<"}</Text>
+          <Text style={[styles.arrow, textStyle]}>{"<"}</Text>
         </TouchableOpacity>
-        <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
+        <Text style={[styles.dateText, textStyle]}>
+          {selectedDate.toDateString()}
+        </Text>
         <TouchableOpacity onPress={() => onDateChange(1)}>
-          <Text style={styles.arrow}>{">"}</Text>
+          <Text style={[styles.arrow, textStyle]}>{">"}</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -67,8 +76,10 @@ const WorkoutsView = ({
         renderItem={({ item }) => (
           <View style={styles.entry}>
             <View style={styles.textContainer}>
-              <Text style={styles.workoutText}>{item.type}</Text>
-              <Text style={styles.caloriesText}>{item.duration} mins</Text>
+              <Text style={[styles.workoutText, textStyle]}>{item.type}</Text>
+              <Text style={[styles.caloriesText, textStyle]}>
+                {item.duration} mins
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -91,7 +102,7 @@ const WorkoutsView = ({
       <Picker
         selectedValue={workoutType}
         onValueChange={(itemValue, itemIndex) => setWorkoutType(itemValue)}
-        style={styles.picker}
+        style={[styles.picker, textStyle]}
       >
         <Picker.Item label="Select a workout type" value="" />
         <Picker.Item label="Running" value="Running" />
@@ -105,7 +116,7 @@ const WorkoutsView = ({
         value={duration}
         onChangeText={setDuration}
         keyboardType="numeric"
-        style={styles.input}
+        style={[styles.input, textStyle]}
       />
 
       <TouchableOpacity style={sharedStyles.button} onPress={addWorkoutEntry}>
@@ -129,34 +140,34 @@ const styles = StyleSheet.create({
     height: 60,
     width: 350,
     marginBottom: 20,
-    color: "black",
-    fontSize: 18, // Adjusting font size
-    fontWeight: "bold", // Making the font bold
   },
   input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 7 },
-
   entry: {
-    flexDirection: "row", // Align items in a row
-    justifyContent: "space-between", // Space between items
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
     padding: 10,
     borderWidth: 1,
-    alignItems: "center", // Align items vertically
+    alignItems: "center",
     borderRadius: 7,
   },
   textContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    flex: 1, // Take up all available space
-    marginRight: 10, // Give some space before the button
+    flex: 1,
+    marginRight: 10,
   },
   workoutText: {
-    fontSize: 16, // Example size
+    fontSize: 16,
     fontWeight: "bold",
   },
   caloriesText: {
-    fontSize: 16, // Example size
+    fontSize: 16,
   },
+  darkContainer: { backgroundColor: "#333" },
+  lightContainer: { backgroundColor: "#fff" },
+  darkText: { color: "#fff" },
+  lightText: { color: "#000" },
 });
 
 export default WorkoutsView;

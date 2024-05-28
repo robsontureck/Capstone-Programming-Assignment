@@ -10,11 +10,13 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sharedStyles from "../styles/styles";
+import { useDarkMode } from "../contexts/DarkModeContext"; // Assuming you have a DarkModeContext
 
 export default function AddMealView({ navigation, route }) {
   const { mealType, date, fetchMealsData } = route.params;
   const [meal, setMeal] = useState("");
   const [calories, setCalories] = useState("");
+  const { isDarkMode } = useDarkMode();
 
   const addMealEntry = async () => {
     try {
@@ -35,21 +37,26 @@ export default function AddMealView({ navigation, route }) {
     }
   };
 
+  const containerStyle = isDarkMode
+    ? styles.darkContainer
+    : styles.lightContainer;
+  const textStyle = isDarkMode ? styles.darkText : styles.lightText;
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.headers}>Add {mealType}</Text>
+    <View style={[styles.container, containerStyle]}>
+      <Text style={[styles.headers, textStyle]}>Add {mealType}</Text>
       <TextInput
         placeholder="Meal"
         value={meal}
         onChangeText={setMeal}
-        style={styles.input}
+        style={[styles.input, textStyle]}
       />
       <TextInput
         placeholder="Calories"
         value={calories}
         onChangeText={setCalories}
         keyboardType="numeric"
-        style={styles.input}
+        style={[styles.input, textStyle]}
       />
 
       <TouchableOpacity style={sharedStyles.button} onPress={addMealEntry}>
@@ -71,5 +78,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 7 },
+  input: {
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 7,
+  },
+  darkContainer: {
+    backgroundColor: "#333",
+  },
+  lightContainer: {
+    backgroundColor: "#fff",
+  },
+  darkText: {
+    color: "#fff",
+  },
+  lightText: {
+    color: "#000",
+  },
 });

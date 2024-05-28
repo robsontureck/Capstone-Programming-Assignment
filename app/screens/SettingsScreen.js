@@ -1,33 +1,11 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Switch,
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { View, Text, Switch, StyleSheet, TouchableOpacity } from "react-native";
+import { useDarkMode } from "../contexts/DarkModeContext"; // Adjust path as necessary
 import sharedStyles from "../styles/styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SettingsScreen({ navigation }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const loadSettings = async () => {
-      const darkMode = await AsyncStorage.getItem("isDarkMode");
-      if (darkMode !== null) {
-        setIsDarkMode(JSON.parse(darkMode));
-      }
-    };
-    loadSettings();
-  }, []);
-
-  const toggleDarkMode = async () => {
-    const newValue = !isDarkMode;
-    setIsDarkMode(newValue);
-    await AsyncStorage.setItem("isDarkMode", JSON.stringify(newValue));
-  };
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -46,14 +24,12 @@ export default function SettingsScreen({ navigation }) {
         <Text style={textStyle}>Dark Mode</Text>
         <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
       </View>
-
       <TouchableOpacity style={sharedStyles.redButton} onPress={handleLogout}>
-        <Text style={sharedStyles.buttonText}>{"Logout"}</Text>
+        <Text style={sharedStyles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
   setting: {

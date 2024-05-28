@@ -113,7 +113,13 @@ export default function HomeScreen({ navigation }) {
 
   const renderScene = SceneMap({
     dashboard: () => (
-      <DashboardView userInfo={userInfo} activities={[]} meals={mealsData} />
+      <DashboardView
+        userInfo={userInfo}
+        activities={workoutsData}
+        meals={mealsData}
+        fetchUserInfo={fetchUserInfo}
+        navigation={navigation}
+      />
     ),
     meals: () => (
       <MealsView
