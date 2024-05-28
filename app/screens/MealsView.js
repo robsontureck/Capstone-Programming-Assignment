@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import sharedStyles from "../styles/styles";
 
 const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -63,8 +64,9 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
             </View>
           )}
         />
-        <Button
-          title={`Add ${mealType}`}
+
+        <TouchableOpacity
+          style={sharedStyles.greenButton}
           onPress={() =>
             navigation.navigate("AddMeal", {
               mealType,
@@ -72,9 +74,12 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
               fetchMealsData,
             })
           }
-        />
-        <Button
-          title={`Edit ${mealType}`}
+        >
+          <Text style={sharedStyles.buttonText}>{`Add ${mealType}`}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={sharedStyles.button}
           onPress={() =>
             navigation.navigate("EditMeal", {
               mealType,
@@ -83,7 +88,9 @@ const MealsView = ({ navigation, mealsData, setMealsData, fetchMealsData }) => {
               fetchMealsData,
             })
           }
-        />
+        >
+          <Text style={sharedStyles.buttonText}>{`Edit ${mealType}`}</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -117,7 +124,12 @@ const styles = StyleSheet.create({
   arrow: { fontSize: 24, marginHorizontal: 20 },
   dateText: { fontSize: 18 },
   mealContainer: { marginBottom: 20 },
-  header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
   entry: {
     flexDirection: "row", // Align items in a row
     justifyContent: "space-between", // Space between items
@@ -125,6 +137,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     alignItems: "center", // Align items vertically
+    borderRadius: 7,
   },
   mealText: {
     fontSize: 16, // Example size

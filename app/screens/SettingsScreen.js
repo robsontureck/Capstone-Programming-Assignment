@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Switch, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  Switch,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import sharedStyles from "../styles/styles";
 
 export default function SettingsScreen({ navigation }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -38,7 +46,10 @@ export default function SettingsScreen({ navigation }) {
         <Text style={textStyle}>Dark Mode</Text>
         <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
       </View>
-      <Button title="Logout" onPress={handleLogout} />
+
+      <TouchableOpacity style={sharedStyles.redButton} onPress={handleLogout}>
+        <Text style={sharedStyles.buttonText}>{"Logout"}</Text>
+      </TouchableOpacity>
     </View>
   );
 }

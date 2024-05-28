@@ -128,6 +128,7 @@ export default function HomeScreen({ navigation }) {
         fetchWorkoutsData={fetchWorkoutsData}
         workoutsData={workoutsData}
         setWorkoutsData={setWorkoutsData}
+        navigation={navigation} // Pass navigation prop here
       />
     ),
   });

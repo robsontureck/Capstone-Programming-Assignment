@@ -13,6 +13,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import UserInfoScreen from "./screens/UserInfoScreen";
 import AddMealScreen from "./screens/AddMealScreen"; // Import AddMealView here
 import EditMealScreen from "./screens/EditMealScreen"; // Import your EditMeal screen
+import EditWorkoutScreen from "./screens/EditWorkoutScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,6 +39,7 @@ export default function App() {
         <Stack.Screen name="Main" component={MainTabs} />
         <Stack.Screen name="AddMeal" component={AddMealScreen} />
         <Stack.Screen name="EditMeal" component={EditMealScreen} />
+        <Stack.Screen name="EditWorkout" component={EditWorkoutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

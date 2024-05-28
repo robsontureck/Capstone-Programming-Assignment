@@ -36,9 +36,12 @@ router.get("/workouts", authenticateToken, async (req, res) => {
 router.put("/workouts/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { type, duration, date } = req.body;
+  console.log(
+    `Updating with type: ${type}, duration: ${duration}, date: ${date}`
+  );
   try {
     const workout = await Workout.findByPk(id);
-    if (!workout || workout.userId !== req.user.id) {
+    if (!workout || workout.user_id !== req.user.id) {
       return res.status(404).json({ error: "Workout entry not found." });
     }
     workout.type = type;
@@ -56,9 +59,14 @@ router.put("/workouts/:id", authenticateToken, async (req, res) => {
 
 router.delete("/workouts/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
+  console.log("Received ID for deletion:", id); // Log received ID
   try {
     const workout = await Workout.findByPk(id);
-    if (!workout || workout.userId !== req.user.id) {
+    console.log("Workout found:", workout); // Log found workout
+    if (!workout || workout.user_id !== req.user.id) {
+      console.log(
+        `Access denied or not found. Workout: ${workout}, User ID: ${req.user.id}`
+      ); // Detailed log for failing condition
       return res.status(404).json({ error: "Workout entry not found." });
     }
     await workout.destroy();

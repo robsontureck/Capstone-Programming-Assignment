@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  TextInput,
+  Button,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import sharedStyles from "../styles/styles";
 
 const EditMeal = ({ route, navigation }) => {
   const { meals } = route.params;
@@ -48,6 +57,7 @@ const EditMeal = ({ route, navigation }) => {
     <View style={styles.container}>
       {mealEdits.map((meal, index) => (
         <View key={meal.id} style={styles.mealEntry}>
+          <Text style={styles.headers}>Meal</Text>
           <TextInput
             style={styles.input}
             value={meal.meal}
@@ -57,6 +67,7 @@ const EditMeal = ({ route, navigation }) => {
               setMealEdits(updatedMeals);
             }}
           />
+          <Text style={styles.headers}>Calories</Text>
           <TextInput
             style={styles.input}
             value={meal.calories.toString()}
@@ -67,12 +78,19 @@ const EditMeal = ({ route, navigation }) => {
             }}
             keyboardType="numeric"
           />
-          <Button title="Save" onPress={() => handleSave(meal)} />
-          <Button
-            title="Delete"
+
+          <TouchableOpacity
+            style={sharedStyles.button}
+            onPress={() => handleSave(meal)}
+          >
+            <Text style={sharedStyles.buttonText}>{"SAVE"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={sharedStyles.redButton}
             onPress={() => handleDelete(meal.id)}
-            color="red"
-          />
+          >
+            <Text style={sharedStyles.buttonText}>{"DELETE"}</Text>
+          </TouchableOpacity>
         </View>
       ))}
     </View>
@@ -80,6 +98,12 @@ const EditMeal = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  headers: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "right",
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -94,6 +118,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 5,
     padding: 10,
+    fontSize: 18,
+    textAlign: "right",
+    borderRadius: 7,
   },
 });
 

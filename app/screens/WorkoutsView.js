@@ -11,54 +11,17 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+import sharedStyles from "../styles/styles";
 
-const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
+const WorkoutsView = ({
+  fetchWorkoutsData,
+  workoutsData,
+  setWorkoutsData,
+  navigation,
+}) => {
   const [workoutType, setWorkoutType] = useState("");
   const [duration, setDuration] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const handleDelete = async (id) => {
-    const token = await AsyncStorage.getItem("token");
-    try {
-      await axios.delete(
-        `http://192.168.1.103:3000/api/workouts/workouts/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      // Filter out the deleted workout
-      setWorkoutsData(workoutsData.filter((workout) => workout.id !== id));
-    } catch (error) {
-      console.error("Failed to delete workout:", error);
-    }
-  };
-
-  const handleEdit = async (id, newType, newDuration) => {
-    const token = await AsyncStorage.getItem("token");
-    const updatedEntry = {
-      type: newType,
-      duration: parseInt(newDuration),
-      date: selectedDate.toISOString().split("T")[0],
-    };
-    try {
-      const response = await axios.put(
-        `http://192.168.1.103:3000/api/workouts/workouts/${id}`,
-        updatedEntry,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const updatedWorkouts = workoutsData.map((workout) => {
-        if (workout.id === id) {
-          return { ...workout, ...response.data };
-        }
-        return workout;
-      });
-      setWorkoutsData(updatedWorkouts);
-    } catch (error) {
-      console.error("Failed to edit workout:", error);
-    }
-  };
 
   const addWorkoutEntry = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -103,13 +66,25 @@ const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.entry}>
-            <Text>{item.type}</Text>
-            <Text>{item.duration} mins</Text>
-            <Button
-              title="Edit"
-              onPress={() => handleEdit(item.id, item.type, item.duration)}
-            />
-            <Button title="Delete" onPress={() => handleDelete(item.id)} />
+            <View style={styles.textContainer}>
+              <Text style={styles.workoutText}>{item.type}</Text>
+              <Text style={styles.caloriesText}>{item.duration} mins</Text>
+            </View>
+
+            <TouchableOpacity
+              style={sharedStyles.greenButton}
+              onPress={() =>
+                navigation.navigate("EditWorkout", {
+                  workoutId: item.id,
+                  currentType: item.type,
+                  currentDuration: item.duration,
+                  date: selectedDate.toISOString().split("T")[0],
+                  fetchWorkoutsData,
+                })
+              }
+            >
+              <Text style={sharedStyles.buttonText}>{"EDIT WORKOUT"}</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -132,7 +107,10 @@ const WorkoutsView = ({ fetchWorkoutsData, workoutsData, setWorkoutsData }) => {
         keyboardType="numeric"
         style={styles.input}
       />
-      <Button title="Add Workout" onPress={addWorkoutEntry} />
+
+      <TouchableOpacity style={sharedStyles.button} onPress={addWorkoutEntry}>
+        <Text style={sharedStyles.buttonText}>{"ADD WORKOUT"}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -148,12 +126,37 @@ const styles = StyleSheet.create({
   arrow: { fontSize: 24, marginHorizontal: 20 },
   dateText: { fontSize: 18 },
   picker: {
-    height: 50,
+    height: 60,
     width: 350,
     marginBottom: 20,
+    color: "black",
+    fontSize: 18, // Adjusting font size
+    fontWeight: "bold", // Making the font bold
   },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10 },
-  entry: { marginBottom: 10, padding: 10, borderWidth: 1 },
+  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 7 },
+
+  entry: {
+    flexDirection: "row", // Align items in a row
+    justifyContent: "space-between", // Space between items
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    alignItems: "center", // Align items vertically
+    borderRadius: 7,
+  },
+  textContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flex: 1, // Take up all available space
+    marginRight: 10, // Give some space before the button
+  },
+  workoutText: {
+    fontSize: 16, // Example size
+    fontWeight: "bold",
+  },
+  caloriesText: {
+    fontSize: 16, // Example size
+  },
 });
 
 export default WorkoutsView;

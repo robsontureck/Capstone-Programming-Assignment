@@ -1,6 +1,7 @@
 const sequelize = require("./models/index");
 const User = require("./models/user");
 const Meal = require("./models/meal");
+const Workout = require("./models/workout");
 
 const syncDatabase = async () => {
   try {

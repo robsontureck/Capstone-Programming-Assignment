@@ -25,7 +25,7 @@ const Workout = sequelize.define("Workout", {
   },
 });
 
-User.hasMany(Workout, { foreignKey: "userId" });
-Workout.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Workout, { foreignKey: "user_id" });
+Workout.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = Workout;

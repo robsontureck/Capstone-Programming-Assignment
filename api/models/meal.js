@@ -35,7 +35,7 @@ const Meal = sequelize.define(
   }
 );
 
-User.hasMany(Meal, { foreignKey: "userId" });
-Meal.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Meal, { foreignKey: "user_id" });
+Meal.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = Meal;

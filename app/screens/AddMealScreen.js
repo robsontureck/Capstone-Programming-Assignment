@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import sharedStyles from "../styles/styles";
 
 export default function AddMealView({ navigation, route }) {
   const { mealType, date, fetchMealsData } = route.params;
@@ -29,7 +37,7 @@ export default function AddMealView({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Text>Add {mealType}</Text>
+      <Text style={styles.headers}>Add {mealType}</Text>
       <TextInput
         placeholder="Meal"
         value={meal}
@@ -43,12 +51,25 @@ export default function AddMealView({ navigation, route }) {
         keyboardType="numeric"
         style={styles.input}
       />
-      <Button title="Save" onPress={addMealEntry} />
+
+      <TouchableOpacity style={sharedStyles.button} onPress={addMealEntry}>
+        <Text style={sharedStyles.buttonText}>{"SAVE"}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10 },
+  headers: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "left",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 7 },
 });
