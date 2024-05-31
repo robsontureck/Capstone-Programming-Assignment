@@ -5,6 +5,50 @@ const User = require("../models/user");
 const authenticateToken = require("../middleware/auth");
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: API to manage users.
+ */
+
+/**
+ * @swagger
+ * /api/users/signup:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: The user was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Username already exists
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -30,6 +74,35 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/users/info:
+ *   post:
+ *     summary: Save user information
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               weight:
+ *                 type: float
+ *               calories:
+ *                 type: float
+ *     responses:
+ *       200:
+ *         description: User information saved successfully
+ *       500:
+ *         description: An error occurred while saving user information
+ */
 router.post("/info", authenticateToken, async (req, res) => {
   const { name, age, weight, calories } = req.body;
   try {
@@ -47,6 +120,33 @@ router.post("/info", authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Get user information
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 age:
+ *                   type: integer
+ *                 weight:
+ *                   type: float
+ *                 calories:
+ *                   type: float
+ *       500:
+ *         description: An error occurred while fetching user information
+ */
 // Route to get user information, protected by authentication
 router.get("/me", authenticateToken, async (req, res) => {
   try {
@@ -61,6 +161,36 @@ router.get("/me", authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Invalid credentials
+ */
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ where: { username } });
@@ -73,6 +203,39 @@ router.post("/login", async (req, res) => {
   res.json({ token });
 });
 
+/**
+ * @swagger
+ * /api/users/info:
+ *   put:
+ *     summary: Update user information
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               weight:
+ *                 type: float
+ *               calories:
+ *                 type: float
+ *     responses:
+ *       200:
+ *         description: User information updated successfully
+ *       400:
+ *         description: Invalid input values
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: An error occurred during the update
+ */
 router.put("/info", authenticateToken, async (req, res) => {
   const { name, age, weight, calories } = req.body;
 

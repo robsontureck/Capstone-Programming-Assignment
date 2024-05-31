@@ -24,7 +24,7 @@ const EditWorkout = ({ route, navigation }) => {
     const token = await AsyncStorage.getItem("token");
     try {
       await axios.put(
-        `http://192.168.1.103:3000/api/workouts/workouts/${workoutId}`,
+        `http://192.168.1.104:3000/api/workouts/workouts/${workoutId}`,
         { type, duration: parseInt(duration), date },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -41,7 +41,7 @@ const EditWorkout = ({ route, navigation }) => {
     const token = await AsyncStorage.getItem("token");
     try {
       await axios.delete(
-        `http://192.168.1.103:3000/api/workouts/workouts/${workoutId}`,
+        `http://192.168.1.104:3000/api/workouts/workouts/${workoutId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       route.params.fetchWorkoutsData();

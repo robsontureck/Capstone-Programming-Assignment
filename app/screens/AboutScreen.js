@@ -9,10 +9,11 @@ export default function AboutScreen() {
     ? styles.darkContainer
     : styles.lightContainer;
   const textStyle = isDarkMode ? styles.darkText : styles.lightText;
+  const headerStyle = isDarkMode ? styles.darkHeader : styles.lightHeader;
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={textStyle}>About Health & Fitness Tracker</Text>
+      <Text style={headerStyle}>About Health & Fitness Tracker</Text>
       <Text style={textStyle}>
         This app helps you track your workouts, meals, and overall health
         metrics efficiently.
@@ -38,5 +39,17 @@ const styles = StyleSheet.create({
   },
   lightText: {
     color: "#000",
+  },
+  darkHeader: {
+    color: "#fff",
+    fontSize: 24, // Adjust the size as needed
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  lightHeader: {
+    color: "#000",
+    fontSize: 24, // Adjust the size as needed
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });

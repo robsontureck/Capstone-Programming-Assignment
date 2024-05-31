@@ -82,97 +82,106 @@ const DashboardView = ({
 
   return (
     <ScrollView style={[styles.container, containerStyle]}>
-      <Text
-        style={[styles.header, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Dashboard
-      </Text>
-      <Text
-        style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Name: {userInfo.name}
-      </Text>
-      <Text
-        style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Age: {userInfo.age} years
-      </Text>
-      <Text
-        style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Weight: {userInfo.weight} kg
-      </Text>
-      <Text
-        style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Calories per day: {userInfo.calories} kCal
-      </Text>
-
-      <TouchableOpacity
-        style={sharedStyles.greenButton}
-        onPress={() =>
-          navigation.navigate("EditUserInfo", { userInfo, fetchUserInfo })
-        }
-      >
-        <Text style={sharedStyles.buttonText}>{"Edit User Info"}</Text>
-      </TouchableOpacity>
-
-      <View style={styles.datePickerContainer}>
-        <TouchableOpacity onPress={() => onDateChange(-1)}>
-          <Text
-            style={[
-              styles.arrow,
-              isDarkMode ? styles.darkText : styles.lightText,
-            ]}
-          >
-            {"<"}
-          </Text>
-        </TouchableOpacity>
+      <View style={styles.contentContainer}>
         <Text
           style={[
-            styles.dateText,
+            styles.header,
             isDarkMode ? styles.darkText : styles.lightText,
           ]}
         >
-          {selectedDate.toDateString()}
+          Dashboard
         </Text>
-        <TouchableOpacity onPress={() => onDateChange(1)}>
+        <Text
+          style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
+        >
+          Name: {userInfo.name}
+        </Text>
+        <Text
+          style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
+        >
+          Age: {userInfo.age} years
+        </Text>
+        <Text
+          style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
+        >
+          Weight: {userInfo.weight} kg
+        </Text>
+        <Text
+          style={[styles.info, isDarkMode ? styles.darkText : styles.lightText]}
+        >
+          Calories per day: {userInfo.calories} kCal
+        </Text>
+
+        <TouchableOpacity
+          style={sharedStyles.greenButton}
+          onPress={() =>
+            navigation.navigate("EditUserInfo", { userInfo, fetchUserInfo })
+          }
+        >
+          <Text style={sharedStyles.buttonText}>{"Edit User Info"}</Text>
+        </TouchableOpacity>
+
+        <View style={styles.datePickerContainer}>
+          <TouchableOpacity onPress={() => onDateChange(-1)}>
+            <Text
+              style={[
+                styles.arrow,
+                isDarkMode ? styles.darkText : styles.lightText,
+              ]}
+            >
+              {"<"}
+            </Text>
+          </TouchableOpacity>
           <Text
             style={[
-              styles.arrow,
+              styles.dateText,
               isDarkMode ? styles.darkText : styles.lightText,
             ]}
           >
-            {">"}
+            {selectedDate.toDateString()}
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDateChange(1)}>
+            <Text
+              style={[
+                styles.arrow,
+                isDarkMode ? styles.darkText : styles.lightText,
+              ]}
+            >
+              {">"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text
+          style={[
+            styles.header,
+            isDarkMode ? styles.darkText : styles.lightText,
+          ]}
+        >
+          Activities of the Day
+        </Text>
+        {renderActivities()}
+
+        {renderMeals("Breakfast")}
+        {renderMeals("Lunch")}
+        {renderMeals("Dinner")}
+
+        <Text
+          style={[
+            styles.totalCalories,
+            isDarkMode ? styles.darkText : styles.lightText,
+          ]}
+        >
+          Total Calories: {getTotalCalories()} Calories
+        </Text>
       </View>
-
-      <Text
-        style={[styles.header, isDarkMode ? styles.darkText : styles.lightText]}
-      >
-        Activities of the Day
-      </Text>
-      {renderActivities()}
-
-      {renderMeals("Breakfast")}
-      {renderMeals("Lunch")}
-      {renderMeals("Dinner")}
-
-      <Text
-        style={[
-          styles.totalCalories,
-          isDarkMode ? styles.darkText : styles.lightText,
-        ]}
-      >
-        Total Calories: {getTotalCalories()} Calories
-      </Text>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
+  container: { flex: 1 },
+  contentContainer: { flexGrow: 1, padding: 20 },
   datePickerContainer: {
     flexDirection: "row",
     justifyContent: "center",

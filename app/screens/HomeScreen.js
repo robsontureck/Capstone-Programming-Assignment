@@ -22,28 +22,12 @@ export default function HomeScreen({ navigation }) {
   const [mealsData, setMealsData] = useState([]);
   const [workoutsData, setWorkoutsData] = useState([]);
 
-  /*const fetchMealsData = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Fetching meals data...");
-      const response = await axios.get(
-        "http://192.168.1.103:3000/api/meals/meals",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setMealsData(response.data);
-      console.log("Fetched meals data:", response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };*/
   const fetchMealsData = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("token");
       console.log("Fetching meals data view...");
       const response = await axios.get(
-        "http://192.168.1.103:3000/api/meals/meals", // Ensure the URL is correct and accessible
+        "http://192.168.1.104:3000/api/meals/meals", // Ensure the URL is correct and accessible
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -64,7 +48,7 @@ export default function HomeScreen({ navigation }) {
       const token = await AsyncStorage.getItem("token");
       console.log("Fetching workouts data...");
       const response = await axios.get(
-        "http://192.168.1.103:3000/api/workouts/workouts",
+        "http://192.168.1.104:3000/api/workouts/workouts",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -81,7 +65,7 @@ export default function HomeScreen({ navigation }) {
       const token = await AsyncStorage.getItem("token");
       console.log("Fetching user info...");
       const response = await axios.get(
-        "http://192.168.1.103:3000/api/users/me",
+        "http://192.168.1.104:3000/api/users/me",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -92,24 +76,24 @@ export default function HomeScreen({ navigation }) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    fetchUserInfo();
+    fetchMealsData();
+    fetchWorkoutsData();
+  }, []); // Empty dependency array ensures this runs only once
   /*
   useEffect(() => {
     fetchUserInfo();
+  }, []); // Empty dependency array ensures this runs only once
+
+  useEffect(() => {
     fetchMealsData();
+  }, []); // Empty dependency array ensures this runs only once
+
+  useEffect(() => {
     fetchWorkoutsData();
   }, []); // Empty dependency array ensures this runs only once*/
-
-  useEffect(() => {
-    fetchUserInfo();
-  }, []); // Empty dependency array ensures this runs only once
-
-  useEffect(() => {
-    fetchMealsData();
-  }, []); // Empty dependency array ensures this runs only once
-
-  useEffect(() => {
-    fetchWorkoutsData();
-  }, []); // Empty dependency array ensures this runs only once
 
   const renderScene = SceneMap({
     dashboard: () => (

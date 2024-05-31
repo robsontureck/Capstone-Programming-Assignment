@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,22 +27,37 @@ const WorkoutsView = ({
   const { isDarkMode } = useDarkMode(); // Use the dark mode context
 
   const addWorkoutEntry = async () => {
-    const token = await AsyncStorage.getItem("token");
-    const newEntry = {
-      type: workoutType,
-      duration: parseInt(duration),
-      date: selectedDate.toISOString().split("T")[0],
-    };
-    await axios.post(
-      "http://192.168.1.103:3000/api/workouts/workouts",
-      newEntry,
-      {
-        headers: { Authorization: `Bearer ${token}` },
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const newEntry = {
+        type: workoutType,
+        duration: parseInt(duration),
+        date: selectedDate.toISOString().split("T")[0],
+      };
+
+      const response = await axios.post(
+        "http://192.168.1.104:3000/api/workouts/workouts",
+        newEntry,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        fetchWorkoutsData();
+        setWorkoutType("");
+        setDuration("");
+      } else {
+        Alert.alert("Error", "Failed to add workout entry. Please try again.");
       }
-    );
-    fetchWorkoutsData();
-    setWorkoutType("");
-    setDuration("");
+    } catch (error) {
+      console.error("Failed to add workout entry:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message ||
+          "An error occurred while adding workout entry. Please try again."
+      );
+    }
   };
 
   const onDateChange = (days) => {

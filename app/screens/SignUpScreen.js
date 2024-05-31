@@ -24,7 +24,7 @@ export default function SignUpScreen({ navigation }) {
         return;
       }
       const response = await axios.post(
-        "http://192.168.1.103:3000/api/users/signup",
+        "http://192.168.1.104:3000/api/users/signup",
         {
           username,
           password,

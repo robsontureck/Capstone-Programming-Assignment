@@ -31,7 +31,7 @@ const EditUserInfo = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.put(
-        "http://192.168.1.103:3000/api/users/info",
+        "http://192.168.1.104:3000/api/users/info",
         {
           name,
           age: parseInt(age),

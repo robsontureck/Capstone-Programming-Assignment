@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
+const swaggerSetup = require("./swagger");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -27,6 +28,8 @@ app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/meals", mealsRouter);
 app.use("/api/workouts", workoutsRouter);
+
+swaggerSetup(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

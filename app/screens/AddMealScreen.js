@@ -6,6 +6,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,13 +28,28 @@ export default function AddMealView({ navigation, route }) {
         date,
         meal_type: mealType,
       };
-      await axios.post("http://192.168.1.103:3000/api/meals/add", newEntry, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchMealsData();
-      navigation.goBack();
+
+      const response = await axios.post(
+        "http://192.168.1.104:3000/api/meals/add",
+        newEntry,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        fetchMealsData();
+        navigation.goBack();
+      } else {
+        Alert.alert("Error", "Failed to add meal entry. Please try again.");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to add meal entry:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message ||
+          "An error occurred while adding meal entry. Please try again."
+      );
     }
   };
 

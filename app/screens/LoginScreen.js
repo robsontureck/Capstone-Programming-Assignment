@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.103:3000/api/users/login",
+        "http://192.168.1.104:3000/api/users/login",
         { username, password }
       );
       await AsyncStorage.setItem("token", response.data.token);

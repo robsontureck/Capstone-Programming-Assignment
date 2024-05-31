@@ -23,7 +23,7 @@ const EditMeal = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.put(
-        `http://192.168.1.103:3000/api/meals/meals/${meal.id}`,
+        `http://192.168.1.104:3000/api/meals/meals/${meal.id}`,
         meal,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -40,7 +40,7 @@ const EditMeal = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.delete(
-        `http://192.168.1.103:3000/api/meals/meals/${id}`,
+        `http://192.168.1.104:3000/api/meals/meals/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

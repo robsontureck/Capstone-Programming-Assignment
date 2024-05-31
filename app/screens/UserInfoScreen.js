@@ -14,7 +14,7 @@ export default function UserInfoScreen({ navigation }) {
       const token = await AsyncStorage.getItem("token");
       console.log(token);
       const userInfo = { name, age, weight, calories };
-      await axios.post("http://192.168.1.103:3000/api/users/info", userInfo, {
+      await axios.post("http://192.168.1.104:3000/api/users/info", userInfo, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigation.replace("Main");
