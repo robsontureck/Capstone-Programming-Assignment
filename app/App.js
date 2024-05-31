@@ -6,6 +6,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { DarkModeProvider } from "./contexts/DarkModeContext";
 import Icon from "react-native-vector-icons/Ionicons";
 
+import { LogBox } from "react-native";
+
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignUpScreen";
@@ -53,6 +55,9 @@ function MainTabs() {
 }
 
 export default function App() {
+  LogBox.ignoreLogs([
+    "Non-serializable values were found in the navigation state",
+  ]);
   return (
     <DarkModeProvider>
       <NavigationContainer>

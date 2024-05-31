@@ -11,51 +11,55 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDarkMode } from "../contexts/DarkModeContext";
-import sharedStyles from "../styles/styles";
+import sharedStyles from "../styles/styles"; // Importing shared styles
 
 const EditUserInfo = ({ route, navigation }) => {
-  const { userInfo } = route.params;
+  const { userInfo } = route.params; // Destructuring userInfo from route params
+  // Initializing state with user info
   const [name, setName] = useState(userInfo.name);
   const [age, setAge] = useState(userInfo.age.toString());
   const [weight, setWeight] = useState(userInfo.weight.toString());
   const [calories, setCalories] = useState(userInfo.calories.toString());
 
-  const { isDarkMode } = useDarkMode(); // Use the dark mode state
+  const { isDarkMode } = useDarkMode(); // Using the dark mode state from context
+
+  // Setting styles based on dark mode state
   const containerStyle = isDarkMode
     ? styles.darkContainer
     : styles.lightContainer;
   const inputStyle = isDarkMode ? styles.darkInput : styles.lightInput;
   const buttonTextStyle = isDarkMode ? styles.darkText : styles.lightText;
 
+  // Function to handle saving user info
   const handleSave = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("token"); // Fetching token from AsyncStorage
       const response = await axios.put(
         "http://192.168.1.104:3000/api/users/info",
         {
           name,
-          age: parseInt(age),
-          weight: parseInt(weight),
-          calories: parseInt(calories),
+          age: parseInt(age), // Parsing age to integer
+          weight: parseInt(weight), // Parsing weight to integer
+          calories: parseInt(calories), // Parsing calories to integer
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Setting authorization header
           },
         }
       );
-      console.log("User info updated:", response.data);
+      console.log("User info updated:", response.data); // Logging response data
       if (route.params.fetchUserInfo) {
-        route.params.fetchUserInfo();
+        route.params.fetchUserInfo(); // Refresh user info
       }
-      navigation.goBack();
-      Alert.alert("Success", "User information has been updated successfully!");
+      navigation.goBack(); // Navigate back
+      Alert.alert("Success", "User information has been updated successfully!"); // Show success alert
     } catch (error) {
       console.error(
         "Failed to update user info:",
-        error.response?.data || "An error occurred"
+        error.response?.data || "An error occurred" // Logging error response
       );
-      Alert.alert("Error", "Failed to update user information.");
+      Alert.alert("Error", "Failed to update user information."); // Show error alert
     }
   };
 

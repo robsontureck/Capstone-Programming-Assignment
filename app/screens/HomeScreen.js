@@ -10,24 +10,24 @@ import MealsView from "./MealsView";
 import WorkoutsView from "./WorkoutsView";
 
 export default function HomeScreen({ navigation }) {
-  const layout = useWindowDimensions();
-  const [index, setIndex] = useState(0);
+  const layout = useWindowDimensions(); // Getting the dimensions of the window
+  const [index, setIndex] = useState(0); // State to manage the current tab index
   const [routes] = useState([
     { key: "dashboard", title: "Dashboard" },
     { key: "meals", title: "Meals" },
     { key: "workouts", title: "Workouts" },
-  ]);
+  ]); // Defining routes for TabView
 
-  const [userInfo, setUserInfo] = useState({ name: "", age: "", weight: "" });
-  const [mealsData, setMealsData] = useState([]);
-  const [workoutsData, setWorkoutsData] = useState([]);
+  const [userInfo, setUserInfo] = useState({ name: "", age: "", weight: "" }); // State to hold user information
+  const [mealsData, setMealsData] = useState([]); // State to hold meals data
+  const [workoutsData, setWorkoutsData] = useState([]); // State to hold workouts data
 
+  // Fetch meals data from the server
   const fetchMealsData = useCallback(async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Fetching meals data view...");
+      const token = await AsyncStorage.getItem("token"); // Fetching token from AsyncStorage
       const response = await axios.get(
-        "http://192.168.1.104:3000/api/meals/meals", // Ensure the URL is correct and accessible
+        "http://192.168.1.104:3000/api/meals/meals",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -37,64 +37,51 @@ export default function HomeScreen({ navigation }) {
       if (JSON.stringify(mealsData) !== JSON.stringify(response.data)) {
         setMealsData(response.data);
       }
-      console.log("Fetched meals data view:", mealsData);
     } catch (error) {
-      console.error("Fetching meals data failed:", error);
+      console.error("Fetching meals data failed:", error); // Log error to console
     }
   }, [mealsData, setMealsData]); // Include dependencies used inside the function
 
+  // Fetch workouts data from the server
   const fetchWorkoutsData = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Fetching workouts data...");
+      const token = await AsyncStorage.getItem("token"); // Fetching token from AsyncStorage
       const response = await axios.get(
         "http://192.168.1.104:3000/api/workouts/workouts",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setWorkoutsData(response.data);
-      console.log("Fetched workouts data:", response.data);
+      setWorkoutsData(response.data); // Update workouts data state
     } catch (error) {
-      console.error(error);
+      console.error(error); // Log error to console
     }
   };
 
+  // Fetch user information from the server
   const fetchUserInfo = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Fetching user info...");
+      const token = await AsyncStorage.getItem("token"); // Fetching token from AsyncStorage
       const response = await axios.get(
         "http://192.168.1.104:3000/api/users/me",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setUserInfo(response.data);
-      console.log("Fetched user info:", response.data);
+      setUserInfo(response.data); // Update user info state
     } catch (error) {
-      console.error(error);
+      console.error(error); // Log error to console
     }
   };
 
+  // useEffect to fetch initial data when the component mounts
   useEffect(() => {
     fetchUserInfo();
     fetchMealsData();
     fetchWorkoutsData();
   }, []); // Empty dependency array ensures this runs only once
-  /*
-  useEffect(() => {
-    fetchUserInfo();
-  }, []); // Empty dependency array ensures this runs only once
 
-  useEffect(() => {
-    fetchMealsData();
-  }, []); // Empty dependency array ensures this runs only once
-
-  useEffect(() => {
-    fetchWorkoutsData();
-  }, []); // Empty dependency array ensures this runs only once*/
-
+  // Define scenes for each tab
   const renderScene = SceneMap({
     dashboard: () => (
       <DashboardView
@@ -125,16 +112,16 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
+      navigationState={{ index, routes }} // Manage tab state
+      renderScene={renderScene} // Render the scenes based on the current tab
+      onIndexChange={setIndex} // Update the index when the tab changes
+      initialLayout={{ width: layout.width }} // Set initial layout width
       renderTabBar={(props) => (
         <TabBar
           {...props}
-          indicatorStyle={{ backgroundColor: "black" }}
-          style={{ backgroundColor: "white" }}
-          labelStyle={{ color: "black" }}
+          indicatorStyle={{ backgroundColor: "black" }} // Style for the tab indicator
+          style={{ backgroundColor: "white" }} // Style for the tab bar
+          labelStyle={{ color: "black" }} // Style for the tab labels
         />
       )}
     />

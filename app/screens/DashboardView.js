@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import sharedStyles from "../styles/styles";
-import { useDarkMode } from "../contexts/DarkModeContext"; // Assuming the path is correct
+import { useDarkMode } from "../contexts/DarkModeContext"; // Importing dark mode context
 
 const DashboardView = ({
   userInfo,
@@ -16,17 +16,19 @@ const DashboardView = ({
   navigation,
   fetchUserInfo,
 }) => {
-  const { isDarkMode } = useDarkMode(); // Use the dark mode state
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { isDarkMode } = useDarkMode(); // Using the dark mode state from context
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Initializing state for selected date
 
+  // Function to handle date changes
   const onDateChange = (change) => {
     setSelectedDate((prevDate) => {
       const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + change);
+      newDate.setDate(newDate.getDate() + change); // Adjust date by the change value
       return newDate;
     });
   };
 
+  // Function to calculate total calories for the selected date
   const getTotalCalories = () => {
     return meals.reduce((total, meal) => {
       if (new Date(meal.date).toDateString() === selectedDate.toDateString()) {
@@ -36,6 +38,12 @@ const DashboardView = ({
     }, 0);
   };
 
+  // Function to calculate remaining calories for the selected date
+  const getRemainingCalories = () => {
+    return userInfo.calories - getTotalCalories();
+  };
+
+  // Function to render meals of a specific type
   const renderMeals = (mealType) => {
     const mealsByType = meals.filter(
       (meal) =>
@@ -57,13 +65,14 @@ const DashboardView = ({
             key={index}
             style={isDarkMode ? styles.darkText : styles.lightText}
           >
-            {meal.meal} - {meal.calories} Calories
+            {meal.meal} - {meal.calories} Kcal
           </Text>
         ))}
       </View>
     );
   };
 
+  // Function to render activities for the selected date
   const renderActivities = () => {
     const activitiesByDate = activities.filter(
       (activity) =>
@@ -76,6 +85,7 @@ const DashboardView = ({
     ));
   };
 
+  // Setting container style based on dark mode state
   const containerStyle = isDarkMode
     ? styles.darkContainer
     : styles.lightContainer;
@@ -172,7 +182,15 @@ const DashboardView = ({
             isDarkMode ? styles.darkText : styles.lightText,
           ]}
         >
-          Total Calories: {getTotalCalories()} Calories
+          Total Calories: {getTotalCalories()} Kcal
+        </Text>
+        <Text
+          style={[
+            styles.totalCalories,
+            isDarkMode ? styles.darkText : styles.lightText,
+          ]}
+        >
+          Calories Remaining: {getRemainingCalories()} Kcal
         </Text>
       </View>
     </ScrollView>
